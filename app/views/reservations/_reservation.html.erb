@@ -1,0 +1,40 @@
+<div id="<%= dom_id reservation %>" class="bg-white rounded-xl shadow-md p-4">
+  <div class="flex justify-between items-start mb-3">
+    <div class="flex-1">
+      <h3 class="font-bold text-lg text-gray-900">
+        <%= reservation.establishment.name %>
+      </h3>
+      <p class="text-gray-600 text-sm mt-1">
+        <%= reservation.establishment.address %>
+      </p>
+    </div>
+    <span class="px-3 py-1 rounded-full text-xs font-semibold <%= case reservation.status
+                                                                   when 'confirmed' then 'bg-green-100 text-green-800'
+                                                                   when 'completed' then 'bg-blue-100 text-blue-800'
+                                                                   when 'cancelled' then 'bg-red-100 text-red-800'
+                                                                   else 'bg-yellow-100 text-yellow-800'
+                                                                   end %>">
+      <%= case reservation.status
+          when 'confirmed' then '✓ Confirmada'
+          when 'completed' then '✓ Concluída'
+          when 'cancelled' then '✗ Cancelada'
+          else '⏳ Pendente'
+          end %>
+    </span>
+  </div>
+
+  <div class="border-t border-gray-200 pt-3 grid grid-cols-2 gap-3">
+    <div>
+      <p class="text-xs text-gray-500">Data e Hora</p>
+      <p class="font-semibold text-gray-900">
+        <%= reservation.date.strftime('%d/%m/%Y %H:%M') %>
+      </p>
+    </div>
+    <div>
+      <p class="text-xs text-gray-500">Pessoas</p>
+      <p class="font-semibold text-gray-900">
+        <%= reservation.people_count %> pessoa<%= reservation.people_count > 1 ? 's' : '' %>
+      </p>
+    </div>
+  </div>
+</div>

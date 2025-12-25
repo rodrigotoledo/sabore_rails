@@ -1,0 +1,119 @@
+<div class="px-4 py-6">
+  <h1 class="text-2xl font-bold text-gray-900 mb-6">Minhas Reservas</h1>
+
+  <% if current_user %>
+    <!-- Navegação com Tabs -->
+    <div data-controller="tabs" data-tabs-active-value="<%= @tab %>">
+      <nav class="flex space-x-1 mb-6 bg-gray-100 rounded-lg p-1">
+        <button data-tabs-target="tab" data-tab="ativas" data-action="click->tabs#select"
+                class="flex-1 py-2 px-3 text-sm font-medium rounded-md transition <%= @tab == 'ativas' ? 'bg-white text-yellow-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' %>">
+          🟢 Ativas
+        </button>
+        <button data-tabs-target="tab" data-tab="historico" data-action="click->tabs#select"
+                class="flex-1 py-2 px-3 text-sm font-medium rounded-md transition <%= @tab == 'historico' ? 'bg-white text-yellow-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' %>">
+          📋 Histórico
+        </button>
+        <button data-tabs-target="tab" data-tab="convites" data-action="click->tabs#select"
+                class="flex-1 py-2 px-3 text-sm font-medium rounded-md transition <%= @tab == 'convites' ? 'bg-white text-yellow-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' %>">
+          💝 Sugestões
+        </button>
+      </nav>
+
+      <!-- Tab: Reservas Ativas -->
+      <div data-tabs-target="panel" data-tab="ativas" class="<%= @tab != 'ativas' ? 'hidden' : '' %>">
+        <% if @tab == 'ativas' && @reservations.any? %>
+          <div class="space-y-4">
+            <% @reservations.each do |reservation| %>
+              <%= render partial: 'reservation_card', locals: { reservation: reservation } %>
+            <% end %>
+          </div>
+        <% elsif @tab == 'ativas' %>
+          <div class="text-center py-16">
+            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">Nenhuma reserva ativa</h3>
+            <p class="text-gray-500 mb-6">Suas próximas reservas aparecerão aqui</p>
+            <%= link_to "Fazer Nova Reserva", explore_index_path, class: "inline-block px-6 py-3 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition" %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Tab: Histórico -->
+      <div data-tabs-target="panel" data-tab="historico" class="<%= @tab != 'historico' ? 'hidden' : '' %>">
+        <% if @tab == 'historico' && @reservations.any? %>
+          <div class="space-y-4">
+            <% @reservations.each do |reservation| %>
+              <%= render partial: 'reservation_card', locals: { reservation: reservation, show_actions: false } %>
+            <% end %>
+          </div>
+        <% elsif @tab == 'historico' %>
+          <div class="text-center py-16">
+            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">Nenhuma reserva no histórico</h3>
+            <p class="text-gray-500">Suas reservas passadas aparecerão aqui</p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Tab: Sugestões -->
+      <div data-tabs-target="panel" data-tab="convites" class="<%= @tab != 'convites' ? 'hidden' : '' %>">
+        <% if @tab == 'convites' %>
+          <div class="mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Restaurantes próximos a você</h3>
+            <p class="text-sm text-gray-600">Baseado na sua localização e preferências</p>
+          </div>
+
+          <% if @suggested_establishments&.any? %>
+            <div class="space-y-4">
+              <% @suggested_establishments.each do |establishment| %>
+                <div class="bg-white rounded-xl shadow-md p-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                      <h4 class="font-bold text-lg text-gray-900"><%= establishment.name %></h4>
+                      <p class="text-gray-600 text-sm mt-1"><%= establishment.address %></p>
+                      <p class="text-gray-500 text-sm mt-2"><%= establishment.description %></p>
+
+                      <div class="flex items-center mt-2">
+                        <span class="text-yellow-600 font-bold text-sm"><%= establishment.rating || "4.8" %></span>
+                        <span class="text-yellow-500 ml-1">⭐</span>
+                        <span class="text-gray-500 text-xs ml-2">2.3 km de distância</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-4 flex gap-2">
+                    <%= link_to "Ver Detalhes", establishment_path(establishment),
+                        class: "flex-1 text-center py-2 px-4 border border-yellow-500 text-yellow-600 rounded-lg font-semibold hover:bg-yellow-50 transition" %>
+                    <%= link_to "Reservar", new_reservation_path(establishment_id: establishment.id),
+                        class: "flex-1 text-center py-2 px-4 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition" %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="text-center py-16">
+              <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <h3 class="text-lg font-semibold text-gray-700 mb-2">Descobrindo restaurantes</h3>
+              <p class="text-gray-500">Ative sua localização para receber sugestões personalizadas</p>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="text-center py-16">
+      <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+      </svg>
+      <h3 class="text-lg font-semibold text-gray-700 mb-2">Faça login para ver suas reservas</h3>
+      <p class="text-gray-500 mb-6">Crie uma conta ou entre para gerenciar suas reservas</p>
+      <%= link_to "Entrar", new_session_path, class: "inline-block px-6 py-3 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition" %>
+    </div>
+  <% end %>
+</div>

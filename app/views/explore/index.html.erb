@@ -1,0 +1,70 @@
+<div class="h-full flex flex-col">
+  <!-- Mapa -->
+  <div
+    class="h-64 w-full"
+    data-controller="map"
+    data-map-establishments-value="<%= @establishments.to_json(only: [:id, :name, :latitude, :longitude, :address]) %>"
+  ></div>
+
+  <!-- Lista de estabelecimentos próximos -->
+  <div class="flex-1 overflow-y-auto px-4 py-6" id="nearby-list">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-gray-900">
+        <svg class="w-5 h-5 inline-block text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+        </svg>
+        Próximo de você
+      </h2>
+      <button
+        class="text-yellow-600 text-sm font-semibold"
+        onclick="navigator.geolocation.getCurrentPosition(() => location.reload())"
+      >
+        Atualizar
+      </button>
+    </div>
+
+    <% if @establishments.any? %>
+      <div class="space-y-4">
+        <% @establishments.each do |establishment| %>
+          <%= link_to establishment_path(establishment), class: "block" do %>
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition flex">
+              <!-- Foto -->
+              <div class="w-24 h-24 bg-gradient-to-br from-yellow-300 to-yellow-500 flex-shrink-0"></div>
+
+              <!-- Info -->
+              <div class="p-3 flex-1">
+                <h3 class="font-bold text-gray-900"><%= establishment.name %></h3>
+
+                <div class="flex items-center mt-1">
+                  <span class="text-yellow-600 font-bold text-sm"><%= establishment.rating || "4.8" %></span>
+                  <span class="text-yellow-500 ml-1">⭐</span>
+                </div>
+
+                <% if establishment.latitude.present? && establishment.longitude.present? %>
+                  <p class="text-gray-500 text-xs mt-1 flex items-center">
+                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                    </svg>
+                    <%= establishment.address&.split(',')&.first || 'Ver no mapa' %>
+                  </p>
+                <% end %>
+
+                <div class="flex gap-2 mt-2">
+                  <%= link_to "Ver", establishment_path(establishment),
+                      class: "flex-1 text-center py-1 px-3 border border-yellow-500 text-yellow-600 text-xs rounded-lg font-semibold hover:bg-yellow-50 transition" %>
+                  <%= link_to "Reservar", new_reservation_path(establishment_id: establishment.id),
+                      class: "flex-1 text-center py-1 px-3 bg-yellow-500 text-white text-xs rounded-lg font-semibold hover:bg-yellow-600 transition" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <p class="text-gray-500">Nenhum restaurante encontrado</p>
+        <p class="text-gray-400 text-sm mt-2">Adicione alguns no banco de dados</p>
+      </div>
+    <% end %>
+  </div>
+</div>

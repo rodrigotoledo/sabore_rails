@@ -1,0 +1,114 @@
+<div class="min-h-screen bg-gray-50">
+  <div data-controller="tabs" data-tabs-tab-value="<%= @tab %>">
+    <!-- Header -->
+    <div class="bg-white shadow-sm border-b">
+      <div class="px-4 py-4">
+        <% if current_user %>
+          <h1 class="text-2xl font-bold text-gray-900">Minhas Reservas</h1>
+          <p class="text-sm text-gray-600 mt-1">Gerencie suas reservas e descubra novos lugares</p>
+        <% else %>
+          <h1 class="text-2xl font-bold text-gray-900">Reservas</h1>
+          <p class="text-sm text-gray-600 mt-1">Descubra restaurantes incríveis e explore sugestões</p>
+          <div class="mt-3 flex gap-2">
+            <%= link_to "Entrar", new_session_path, class: "text-sm px-3 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition" %>
+            <span class="text-sm text-gray-500">para ver suas reservas</span>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div class="px-4 -mb-px">
+        <div class="flex space-x-8">
+          <% if current_user %>
+            <button data-action="click->tabs#select" data-tabs-target="tab" data-tab="ativas"
+                    class="py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap <%= @tab == 'ativas' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' %>">
+              📅 Ativas
+            </button>
+            <button data-action="click->tabs#select" data-tabs-target="tab" data-tab="historico"
+                    class="py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap <%= @tab == 'historico' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' %>">
+              📋 Histórico
+            </button>
+          <% end %>
+          <button data-action="click->tabs#select" data-tabs-target="tab" data-tab="sugestoes"
+                  class="py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap <%= @tab == 'sugestoes' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' %>">
+            ✨ <%= current_user ? 'Sugestões' : 'Descubra' %>
+          </button>
+        </div>
+      </div>
+
+    <!-- Tab Panels -->
+    <div class="px-4 py-6">
+      <% if current_user %>
+        <!-- Ativas Tab -->
+        <div data-tabs-target="panel" data-tab="ativas" class="<%= @tab != 'ativas' ? 'hidden' : '' %>">
+          <% if @tab == 'ativas' && @reservations&.any? %>
+            <div class="space-y-4">
+              <% @reservations.each do |reservation| %>
+                <%= render 'reservation_card', reservation: reservation %>
+              <% end %>
+            </div>
+          <% elsif @tab == 'ativas' %>
+            <div class="text-center py-16">
+              <div class="text-6xl mb-4">📅</div>
+              <h3 class="text-lg font-semibold text-gray-700 mb-2">Nenhuma reserva ativa</h3>
+              <p class="text-gray-500 mb-6">Suas próximas reservas aparecerão aqui</p>
+              <%= link_to "Explorar Restaurantes", root_path, class: "inline-block px-6 py-3 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition" %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Histórico Tab -->
+        <div data-tabs-target="panel" data-tab="historico" class="<%= @tab != 'historico' ? 'hidden' : '' %>">
+          <% if @tab == 'historico' && @reservations&.any? %>
+            <div class="space-y-4">
+              <% @reservations.each do |reservation| %>
+                <%= render 'reservation_card', reservation: reservation, locals: { show_actions: false } %>
+              <% end %>
+            </div>
+          <% elsif @tab == 'historico' %>
+            <div class="text-center py-16">
+              <div class="text-6xl mb-4">📋</div>
+              <h3 class="text-lg font-semibold text-gray-700 mb-2">Nenhuma reserva no histórico</h3>
+              <p class="text-gray-500">Suas reservas passadas aparecerão aqui</p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Sugestões Tab (sempre visível) -->
+      <div data-tabs-target="panel" data-tab="sugestoes" class="<%= (@tab != 'sugestoes' && current_user) ? 'hidden' : '' %>">
+        <% if @suggestions&.any? %>
+          <div class="space-y-4">
+            <div class="text-center py-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                <%= current_user ? '✨ Sugestões para Você' : '🍽️ Restaurantes em Destaque' %>
+              </h3>
+              <p class="text-sm text-gray-600">
+                <%= current_user ?
+                    'Baseado no seu histórico, achamos que você vai gostar destes lugares!' :
+                    'Descubra os melhores restaurantes da região' %>
+              </p>
+            </div>
+
+            <% @suggestions.each do |establishment| %>
+              <%= render 'suggestion_card', establishment: establishment %>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-16">
+            <div class="text-6xl mb-4"><%= current_user ? '🎯' : '🍽️' %></div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">
+              <%= current_user ? 'Em breve, sugestões personalizadas!' : 'Explore nossos restaurantes' %>
+            </h3>
+            <p class="text-gray-500 mb-6">
+              <%= current_user ?
+                  'Faça algumas reservas para recebermos sugestões baseadas no seu gosto.' :
+                  'Navegue pelo mapa e descubra estabelecimentos incríveis perto de você.' %>
+            </p>
+            <%= link_to "Explorar no Mapa", explore_index_path, class: "inline-block px-6 py-3 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

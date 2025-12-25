@@ -1,0 +1,42 @@
+<%= form_with(model: reservation, class: "contents") do |form| %>
+  <% if reservation.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(reservation.errors.count, "error") %> prohibited this reservation from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% reservation.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :establishment_id %>
+    <%= form.text_field :establishment_id, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": reservation.errors[:establishment_id].none?, "border-red-400 focus:outline-red-600": reservation.errors[:establishment_id].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :user_id %>
+    <%= form.text_field :user_id, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": reservation.errors[:user_id].none?, "border-red-400 focus:outline-red-600": reservation.errors[:user_id].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :date %>
+    <%= form.datetime_field :date, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": reservation.errors[:date].none?, "border-red-400 focus:outline-red-600": reservation.errors[:date].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :people_count %>
+    <%= form.number_field :people_count, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": reservation.errors[:people_count].none?, "border-red-400 focus:outline-red-600": reservation.errors[:people_count].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :status %>
+    <%= form.text_field :status, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": reservation.errors[:status].none?, "border-red-400 focus:outline-red-600": reservation.errors[:status].any?}] %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

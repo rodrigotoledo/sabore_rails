@@ -1,0 +1,73 @@
+<div class="px-4 py-6">
+
+  <!-- Categorias -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-bold text-gray-900 mb-5">O que você está com vontade?</h2>
+
+    <div class="grid grid-cols-4 gap-4">
+      <% @categories.each do |category| %>
+        <%= link_to establishments_path(category: category.name), class: "flex flex-col items-center" do %>
+          <div class="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center shadow-md hover:bg-yellow-500 transition mb-2">
+            <!-- Ícone placeholder - depois você pode usar Heroicons ou SVG -->
+            <span class="text-3xl"><%= category.icon || "🍽️" %></span>
+          </div>
+          <p class="text-sm font-medium text-gray-700 text-center"><%= category.name %></p>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Melhores avaliados -->
+  <section>
+    <div class="flex justify-between items-center mb-5">
+      <h2 class="text-2xl font-bold text-gray-900">Melhores da região</h2>
+      <%= link_to "Ver todos", establishments_path, class: "text-yellow-600 font-semibold" %>
+    </div>
+
+    <div class="grid grid-cols-2 gap-5">
+      <% @establishments.each do |establishment| %>
+        <%= link_to establishment_path(establishment), class: "block" do %>
+          <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition">
+            <!-- Foto placeholder - depois usa Active Storage -->
+            <div class="h-40 bg-gradient-to-br from-yellow-300 to-yellow-500 relative">
+              <div class="absolute inset-0 bg-black opacity-20"></div>
+              <% if establishment.establishment_type == "fast_food" %>
+                <span class="absolute top-3 right-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold">FAST FOOD</span>
+              <% end %>
+            </div>
+
+            <div class="p-4">
+              <h3 class="font-bold text-lg text-gray-900"><%= establishment.name %></h3>
+
+              <div class="flex items-center mt-1">
+                <span class="text-yellow-600 font-bold"><%= establishment.rating || "4.8" %></span>
+                <span class="text-yellow-500 ml-1">⭐</span>
+                <span class="text-gray-500 text-sm ml-1">(128)</span>
+              </div>
+
+              <p class="text-gray-600 text-sm mt-2 line-clamp-2"><%= establishment.description || "Deliciosas opções para todos os gostos" %></p>
+
+              <div class="flex items-center mt-3 text-sm text-gray-500">
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                </svg>
+                <span>2.4 km • <%= establishment.address.split(',').first %></span>
+              </div>
+
+              <%= link_to "Reservar", new_reservation_path(establishment_id: establishment.id),
+                  class: "block w-full mt-3 py-2 bg-yellow-500 text-white text-center rounded-lg font-semibold hover:bg-yellow-600 transition" %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+</div>
+
+<!-- Caso não tenha estabelecimentos ainda (dev) -->
+<% if @establishments.empty? %>
+  <div class="text-center py-12">
+    <p class="text-gray-500 text-lg">Nenhum restaurante cadastrado ainda.</p>
+    <p class="text-gray-400 mt-2">Use o rails console ou seeds pra adicionar alguns! 🍔</p>
+  </div>
+<% end %>

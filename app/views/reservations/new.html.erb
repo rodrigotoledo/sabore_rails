@@ -1,0 +1,77 @@
+<div class="px-4 py-6">
+  <h1 class="text-2xl font-bold text-gray-900 mb-6">Nova Reserva</h1>
+
+  <% if @establishment %>
+    <div class="bg-white rounded-xl shadow-md p-4 mb-6">
+      <h2 class="font-bold text-lg text-gray-900"><%= @establishment.name %></h2>
+      <p class="text-gray-600 text-sm"><%= @establishment.address %></p>
+    </div>
+  <% end %>
+
+  <%= form_with model: @reservation, class: "space-y-6" do |form| %>
+    <% if @reservation.errors.any? %>
+      <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <h3 class="text-red-800 font-semibold mb-2">Erro na reserva:</h3>
+        <ul class="text-red-700 text-sm space-y-1">
+          <% @reservation.errors.full_messages.each do |message| %>
+            <li>• <%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if @establishment %>
+      <%= form.hidden_field :establishment_id, value: @establishment.id %>
+    <% else %>
+      <div>
+        <%= form.label :establishment_id, "Restaurante", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.select :establishment_id,
+            options_from_collection_for_select(Establishment.all, :id, :name),
+            { prompt: "Selecione um restaurante" },
+            { class: "w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" } %>
+      </div>
+    <% end %>
+
+    <div>
+      <%= form.label :email, "Seu email", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.email_field :email,
+          value: current_user&.email_address,
+          placeholder: "exemplo@email.com",
+          class: "w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" %>
+      <p class="text-xs text-gray-500 mt-1">Usaremos para confirmar sua reserva</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= form.label :people_count, "Pessoas", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.number_field :people_count,
+            min: 1, max: 20, value: 2,
+            class: "w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" %>
+      </div>
+
+      <div>
+        <%= form.label :date, "Data e Hora", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.datetime_local_field :date,
+            min: Time.current.strftime("%Y-%m-%dT%H:%M"),
+            class: "w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" %>
+      </div>
+    </div>
+
+    <% unless current_user %>
+      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <h3 class="text-yellow-800 font-semibold mb-2">💡 Dica</h3>
+        <p class="text-yellow-700 text-sm">
+          Você pode fazer a reserva sem cadastro, mas para confirmar e gerenciar suas reservas,
+          será necessário <%= link_to "fazer login", new_session_path, class: "font-semibold underline" %> depois.
+        </p>
+      </div>
+    <% end %>
+
+    <div class="flex gap-3">
+      <%= form.submit "Fazer Reserva",
+          class: "flex-1 py-3 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition" %>
+      <%= link_to "Voltar", :back,
+          class: "px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition" %>
+    </div>
+  <% end %>
+</div>

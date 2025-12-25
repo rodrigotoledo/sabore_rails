@@ -1,0 +1,43 @@
+<div class="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl shadow-md p-4 border border-yellow-200">
+  <div class="flex items-start gap-4">
+    <!-- Logo do estabelecimento -->
+    <div class="w-16 h-16 rounded-lg flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden">
+      <% if establishment.logo.attached? %>
+        <%= image_tag establishment.logo, class: "w-full h-full object-cover rounded-lg" %>
+      <% else %>
+        <div class="w-full h-full bg-yellow-200 rounded-lg flex items-center justify-center text-yellow-800 font-bold text-xl">
+          <%= establishment.name.first.upcase %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="flex-1">
+      <h3 class="font-bold text-lg text-gray-900 mb-1">
+        <%= establishment.name %>
+      </h3>
+      <p class="text-gray-600 text-sm mb-2">
+        <%= establishment.description %>
+      </p>
+      <p class="text-gray-500 text-xs mb-2">
+        📍 <%= establishment.address %>
+      </p>
+
+      <div class="flex items-center gap-4 mb-3">
+        <div class="flex items-center gap-1">
+          <span class="text-yellow-500">★</span>
+          <span class="text-sm font-semibold text-gray-700">
+            <%= establishment.rating %>
+          </span>
+        </div>
+        <span class="text-xs px-2 py-1 bg-yellow-200 text-yellow-800 rounded-full font-medium">
+          🍽️ <%= establishment.primary_category %>
+        </span>
+      </div>
+
+      <div class="flex gap-2">
+        <%= link_to "Ver Cardápio", establishment_path(establishment), class: "flex-1 text-center py-2 px-3 bg-white border border-yellow-300 text-yellow-700 rounded-lg font-semibold hover:bg-yellow-50 transition text-sm" %>
+        <%= link_to "Reservar", new_reservation_path(establishment_id: establishment.id), class: "flex-1 text-center py-2 px-3 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition text-sm" %>
+      </div>
+    </div>
+  </div>
+</div>

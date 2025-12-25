@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Sabore" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Sabore">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Leaflet CSS para mapas %>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+
+    <%# Leaflet JS (UMD) - carregado antes dos controllers importmap para disponibilizar `L` globalmente %>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="h-full bg-gray-50 text-gray-900" data-controller="<%= 'drawer' if ['reservations', 'establishments'].include?(controller_name) && (action_name == 'index' || action_name == 'show' || action_name == 'new') %>">
+    <!-- Header fixo com search -->
+    <header class="sticky top-0 z-40 bg-gradient-to-r from-yellow-400 to-yellow-500 shadow-md">
+      <div class="px-4 py-3">
+        <div class="flex gap-3 items-center">
+          <!-- Logo da aplicação -->
+          <%= link_to root_path, class: "flex items-center gap-2 text-white font-bold text-xl" do %>
+            <div class="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+              <span class="text-white text-lg font-bold">🍽️</span>
+            </div>
+            <span class="hidden sm:block">Sabore</span>
+          <% end %>
+
+          <div class="flex-1 relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
+            <%= form_with url: establishments_path, method: :get, class: "w-full" do %>
+              <%= text_field_tag :query,
+                params[:query],
+                class: "block w-full pl-10 pr-3 py-3 border-0 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-yellow-600 text-gray-900 placeholder-gray-500",
+                placeholder: "Buscar restaurantes, pratos..."
+              %>
+            <% end %>
+          </div>
+
+          <!-- Menu especial para reservas -->
+          <% if ['reservations', 'establishments'].include?(controller_name) && (action_name == 'index' || action_name == 'show' || action_name == 'new') %>
+            <button data-action="click->drawer#toggle" class="p-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </header>
+
+    <main class="min-h-screen pb-20">
+      <%= yield %>
+    </main>
+
+    <!-- Drawer Menu para Reservas -->
+    <% if ['reservations', 'establishments'].include?(controller_name) && (action_name == 'index' || action_name == 'show' || action_name == 'new') %>
+      <div class="fixed inset-0 z-50 hidden" data-drawer-target="overlay">
+        <!-- Backdrop -->
+        <div data-action="click->drawer#close" class="absolute inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+
+        <!-- Drawer Panel -->
+        <div data-drawer-target="panel" class="absolute right-0 top-0 h-full w-80 max-w-xs bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-out">
+          <!-- Header do Drawer -->
+          <div class="flex items-center justify-between p-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">📋 Menu de Reservas</h2>
+            <button data-action="click->drawer#close" class="p-2 hover:bg-gray-100 rounded-lg transition">
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Conteúdo do Drawer -->
+          <div class="p-4 space-y-2">
+            <!-- Navegação Principal -->
+            <div class="space-y-1">
+              <%= link_to reservations_path, class: "flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-50 hover:text-yellow-600 transition group" do %>
+                <div class="p-2 bg-yellow-100 group-hover:bg-yellow-200 rounded-lg transition">
+                  <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="font-medium text-gray-900">Minhas Reservas</div>
+                  <div class="text-sm text-gray-500">Ver todas suas reservas</div>
+                </div>
+              <% end %>
+
+              <%= link_to explore_index_path, class: "flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-50 hover:text-yellow-600 transition group" do %>
+                <div class="p-2 bg-green-100 group-hover:bg-green-200 rounded-lg transition">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="font-medium text-gray-900">Explorar no Mapa</div>
+                  <div class="text-sm text-gray-500">Encontre restaurantes próximos</div>
+                </div>
+              <% end %>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Seções das Reservas -->
+            <div class="space-y-1">
+              <h3 class="text-sm font-semibold text-gray-900 px-3 py-2">📋 Suas Reservas</h3>
+
+              <% if current_user %>
+                <%= link_to reservations_path(tab: 'ativas'), class: "flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition" do %>
+                  <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span class="text-gray-700">📅 Reservas Ativas</span>
+                <% end %>
+
+                <%= link_to reservations_path(tab: 'historico'), class: "flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition" do %>
+                  <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span class="text-gray-700">📋 Histórico</span>
+                <% end %>
+              <% end %>
+
+              <%= link_to reservations_path(tab: 'sugestoes'), class: "flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition" do %>
+                <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                <span class="text-gray-700">✨ <%= current_user ? 'Sugestões' : 'Descubra' %></span>
+              <% end %>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Autenticação -->
+            <% unless current_user %>
+              <div class="space-y-1">
+                <h3 class="text-sm font-semibold text-gray-900 px-3 py-2">👤 Conta</h3>
+
+                <%= link_to new_session_path, class: "flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition group" do %>
+                  <div class="p-2 bg-blue-100 group-hover:bg-blue-200 rounded-lg transition">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-medium text-gray-900">Fazer Login</div>
+                    <div class="text-sm text-gray-500">Acesse sua conta</div>
+                  </div>
+                <% end %>
+
+                <%= link_to new_user_path, class: "flex items-center gap-3 p-3 rounded-lg hover:bg-green-50 hover:text-green-600 transition group" do %>
+                  <div class="p-2 bg-green-100 group-hover:bg-green-200 rounded-lg transition">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-medium text-gray-900">Criar Conta</div>
+                    <div class="text-sm text-gray-500">Junte-se a nós</div>
+                  </div>
+                <% end %>
+              </div>
+
+              <hr class="my-4">
+            <% end %>
+
+            <!-- Ações Especiais -->
+            <div class="space-y-1">
+              <h3 class="text-sm font-semibold text-gray-900 px-3 py-2">🎆 Ações Rápidas</h3>
+
+              <%= link_to new_reservation_path, class: "flex items-center gap-3 p-3 rounded-lg hover:bg-green-50 hover:text-green-600 transition group" do %>
+                <div class="p-1 bg-green-100 group-hover:bg-green-200 rounded transition">
+                  <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  </svg>
+                </div>
+                <span class="text-gray-700 group-hover:text-green-600">🍽️ Nova Reserva</span>
+              <% end %>
+
+              <%= link_to root_path, class: "flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition" do %>
+                <div class="p-1 bg-gray-100 rounded transition">
+                  <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                  </svg>
+                </div>
+                <span class="text-gray-700">🏠 Voltar ao Início</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+      <div class="grid grid-cols-4 h-16">
+        <%= link_to root_path, class: "flex flex-col items-center justify-center #{current_page?(root_path) ? 'text-yellow-500' : 'text-gray-500'}" do %>
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          <span class="text-xs mt-1">Início</span>
+        <% end %>
+
+        <%= link_to explore_index_path, class: "flex flex-col items-center justify-center #{current_page?(explore_index_path) ? 'text-yellow-500' : 'text-gray-500'}" do %>
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+          </svg>
+          <span class="text-xs mt-1">Explorar</span>
+        <% end %>
+
+        <%= link_to reservations_path, class: "flex flex-col items-center justify-center #{(['reservations', 'establishments'].include?(controller_name) && (action_name == 'index' || action_name == 'show' || action_name == 'new')) || current_page?(reservations_path) ? 'text-yellow-500' : 'text-gray-500'}" do %>
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <span class="text-xs mt-1">Reservas</span>
+        <% end %>
+
+        <% if current_user %>
+          <%= link_to "#", class: "flex flex-col items-center justify-center text-gray-500" do %>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+            <span class="text-xs mt-1">Perfil</span>
+          <% end %>
+        <% else %>
+          <%= link_to new_session_path, class: "flex flex-col items-center justify-center text-gray-500" do %>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+            </svg>
+            <span class="text-xs mt-1">Entrar</span>
+          <% end %>
+        <% end %>
+      </div>
+    </nav>
+
+    <!-- Flash messages bonitinhas -->
+    <% flash.each do |type, msg| %>
+      <div class="fixed bottom-20 left-4 right-4 z-50">
+        <div class="bg-yellow-500 text-white px-4 py-3 rounded-lg shadow-lg text-center font-medium">
+          <%= msg %>
+        </div>
+      </div>
+    <% end %>
+  </body>
+</html>
