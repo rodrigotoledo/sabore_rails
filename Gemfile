@@ -59,6 +59,10 @@ group :development, :test do
 
   # Generate fake data for testing and development
   gem "faker"
+  gem "dotenv-rails"
+  gem "letter_opener"
+  gem "simplecov", require: false
+  gem "rufo", require: false
 end
 
 group :development do
@@ -72,4 +76,4 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem 'pg', '>= 1.4'
+gem 'pg'

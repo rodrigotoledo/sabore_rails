@@ -1,49 +1,33 @@
-# config/database.yml
-
 default: &default
-  adapter: postgresql
-  encoding: unicode
-  host: <%= ENV.fetch("POSTGRES_HOST") { "db" } %>
-  username: <%= ENV.fetch("POSTGRES_USER") { "postgres" } %>
-  password: <%= ENV.fetch("POSTGRES_PASSWORD") { "postgres" } %>
-  port: 5432
+  adapter: sqlite3
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
 
 development:
   primary:
     <<: *default
-    database: sabore_development
-
+    database: <%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_development" %>
+  cache:
+    <<: *default
+    database: storage/<%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_cache_development" %>
+    migrations_path: db/cache_migrate
   cable:
     <<: *default
-    database: sabore_development
-
-  queue:
-    <<: *default
-    database: sabore_development
-
+    database: storage/<%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_cable_development" %>
+    migrations_path: db/cable_migrate
 test:
-  primary:
-    <<: *default
-    database: sabore_test
-
-  cable:
-    <<: *default
-    database: sabore_test
-
-  queue:
-    <<: *default
-    database: sabore_test
+  <<: *default
+  database: <%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_test" %>
 
 production:
   primary:
     <<: *default
-    database: sabore_production
-
+    url: <%= ENV.fetch("DATABASE_URL", 'url_production_database') %>
+  cache:
+    <<: *default
+    database: storage/<%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_cache_production" %>
+    migrations_path: db/cache_migrate
   cable:
     <<: *default
-    database: sabore_production
-
-  queue:
-    <<: *default
-    database: sabore_production
+    database: storage/<%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_cable_production" %>
+    migrations_path: db/cable_migrate
