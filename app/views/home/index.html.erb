@@ -8,8 +8,17 @@
       <% @categories.each do |category| %>
         <%= link_to establishments_path(category: category.name), class: "flex flex-col items-center" do %>
           <div class="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center shadow-md hover:bg-yellow-500 transition mb-2">
-            <!-- Ícone placeholder - depois você pode usar Heroicons ou SVG -->
-            <span class="text-3xl"><%= category.icon || "🍽️" %></span>
+            <% if category.icon.present? %>
+              <span class="text-3xl"><%= category.icon %></span>
+            <% else %>
+              <!-- Ícone Lucide Utensils SVG -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M7 2v20m5-20v20m5-20v20" />
+                <circle cx="7" cy="7" r="2" />
+                <circle cx="12" cy="7" r="2" />
+                <circle cx="17" cy="7" r="2" />
+              </svg>
+            <% end %>
           </div>
           <p class="text-sm font-medium text-gray-700 text-center"><%= category.name %></p>
         <% end %>
@@ -24,13 +33,27 @@
       <%= link_to "Ver todos", establishments_path, class: "text-yellow-600 font-semibold" %>
     </div>
 
-    <div class="grid grid-cols-2 gap-5">
+  <div class="grid md:grid-cols-2 grid-cols-1 gap-5 w-full">
       <% @establishments.each do |establishment| %>
         <%= link_to establishment_path(establishment), class: "block" do %>
           <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition">
-            <!-- Foto placeholder - depois usa Active Storage -->
-            <div class="h-40 bg-gradient-to-br from-yellow-300 to-yellow-500 relative">
-              <div class="absolute inset-0 bg-black opacity-20"></div>
+
+            <div class="h-40 relative">
+              <% if establishment.photos.attached? && establishment.photos.first.present? %>
+                <%= image_tag establishment.photos.first.variant(resize_to_fill: [400, 160]), class: "w-full h-full object-cover" %>
+                <div class="absolute inset-0 bg-black opacity-20"></div>
+              <% else %>
+                <div class="h-full w-full bg-gradient-to-br from-yellow-300 to-yellow-500 flex items-center justify-center">
+                  <!-- Ícone Lucide Utensils SVG -->
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path d="M7 2v20m5-20v20m5-20v20" />
+                    <circle cx="7" cy="7" r="2" />
+                    <circle cx="12" cy="7" r="2" />
+                    <circle cx="17" cy="7" r="2" />
+                  </svg>
+                </div>
+                <div class="absolute inset-0 bg-black opacity-20"></div>
+              <% end %>
               <% if establishment.establishment_type == "fast_food" %>
                 <span class="absolute top-3 right-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold">FAST FOOD</span>
               <% end %>

@@ -28,9 +28,13 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <%= javascript_importmap_tags %>
+
+    <meta name="turbo-cache-control" content="no-preview">
   </head>
 
-  <body class="h-full bg-gray-50 text-gray-900" data-controller="<%= 'drawer' if ['reservations', 'establishments'].include?(controller_name) && (action_name == 'index' || action_name == 'show' || action_name == 'new') %>">
+  <body class="h-full bg-gray-50 text-gray-900"
+        data-controller="<%= 'drawer' if ['reservations', 'establishments'].include?(controller_name) && (action_name == 'index' || action_name == 'show' || action_name == 'new') %>"
+        data-turbo-native="true">
     <!-- Header fixo com search -->
     <header class="sticky top-0 z-40 bg-gradient-to-r from-yellow-400 to-yellow-500 shadow-md">
       <div class="px-4 py-3">
@@ -38,14 +42,14 @@
           <!-- Logo da aplicação -->
           <%= link_to root_path, class: "flex items-center gap-2 text-white font-bold text-xl" do %>
             <div class="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-              <span class="text-white text-lg font-bold">🍽️</span>
+              <span class="text-yellow-500 text-2lg font-bold">🍽️</span>
             </div>
             <span class="hidden sm:block">Sabore</span>
           <% end %>
 
           <div class="flex-1 relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg class="h-5 w-5 text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-5 w-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
             </div>
@@ -61,7 +65,7 @@
           <!-- Menu especial para reservas -->
           <% if ['reservations', 'establishments'].include?(controller_name) && (action_name == 'index' || action_name == 'show' || action_name == 'new') %>
             <button data-action="click->drawer#toggle" class="p-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
               </svg>
             </button>

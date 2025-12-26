@@ -5,8 +5,17 @@ class EstablishmentsController < ApplicationController
   # GET /establishments or /establishments.json
   def index
     @establishments = Establishment.all
-    @establishments = @establishments.where("name LIKE ?", "%#{params[:query]}%") if params[:query].present?
-    @establishments = @establishments.where(establishment_type: params[:category]) if params[:category].present?
+
+    if params[:category].present?
+      @establishments = @establishments.joins(:categories).where(categories: { name: params[:category] })
+    end
+
+    if params[:query].present?
+      @establishments = @establishments.where(
+        "name ILIKE :q OR description ILIKE :q",
+        q: "%#{params[:query]}%"
+      )
+    end
   end
 
   # GET /establishments/1 or /establishments/1.json

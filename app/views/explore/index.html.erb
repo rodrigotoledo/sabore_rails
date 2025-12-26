@@ -28,8 +28,25 @@
         <% @establishments.each do |establishment| %>
           <%= link_to establishment_path(establishment), class: "block" do %>
             <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition flex">
+
               <!-- Foto -->
-              <div class="w-24 h-24 bg-gradient-to-br from-yellow-300 to-yellow-500 flex-shrink-0"></div>
+              <div class="w-24 h-24 relative flex-shrink-0">
+                <% if establishment.photos.attached? && establishment.photos.first.present? %>
+                  <%= image_tag establishment.photos.first.variant(resize_to_fill: [96, 96]), class: "w-full h-full object-cover rounded-xl" %>
+                  <div class="absolute inset-0 bg-black opacity-10 rounded-xl"></div>
+                <% else %>
+                  <div class="h-full w-full bg-gradient-to-br from-yellow-300 to-yellow-500 flex items-center justify-center">
+                    <!-- Ícone Lucide Utensils SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path d="M7 2v20m5-20v20m5-20v20" />
+                      <circle cx="7" cy="7" r="2" />
+                      <circle cx="12" cy="7" r="2" />
+                      <circle cx="17" cy="7" r="2" />
+                    </svg>
+                  </div>
+                  <div class="absolute inset-0 bg-black opacity-10 rounded-xl"></div>
+                <% end %>
+              </div>
 
               <!-- Info -->
               <div class="p-3 flex-1">

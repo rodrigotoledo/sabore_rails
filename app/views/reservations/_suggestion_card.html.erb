@@ -16,7 +16,7 @@
         <%= establishment.name %>
       </h3>
       <p class="text-gray-600 text-sm mb-2">
-        <%= establishment.description %>
+        <%= truncate(establishment.description) %>
       </p>
       <p class="text-gray-500 text-xs mb-2">
         📍 <%= establishment.address %>
@@ -35,7 +35,7 @@
       </div>
 
       <div class="flex gap-2">
-        <%= link_to "Ver Cardápio", establishment_path(establishment), class: "flex-1 text-center py-2 px-3 bg-white border border-yellow-300 text-yellow-700 rounded-lg font-semibold hover:bg-yellow-50 transition text-sm" %>
+        <%= link_to "Cardápio", establishment_path(establishment), class: "flex-1 text-center py-2 px-3 bg-white border border-yellow-300 text-yellow-700 rounded-lg font-semibold hover:bg-yellow-50 transition text-sm" %>
         <%= link_to "Reservar", new_reservation_path(establishment_id: establishment.id), class: "flex-1 text-center py-2 px-3 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition text-sm" %>
       </div>
     </div>
