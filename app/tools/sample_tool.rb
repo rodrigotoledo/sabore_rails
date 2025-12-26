@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SampleTool < ApplicationTool
-  description 'Greet a user'
+  description "Greet a user"
 
   # Optional: Add annotations to provide hints about the tool's behavior
   # annotations(
@@ -11,11 +11,11 @@ class SampleTool < ApplicationTool
   # )
 
   arguments do
-    required(:id).filled(:integer).description('ID of the user to greet')
-    optional(:prefix).filled(:string).description('Prefix to add to the greeting')
+    required(:id).filled(:integer).description("ID of the user to greet")
+    optional(:prefix).filled(:string).description("Prefix to add to the greeting")
   end
 
-  def call(id:, prefix: 'Hey')
+  def call(id:, prefix: "Hey")
     user = User.find(id)
 
     "#{prefix} #{user.first_name} !"

@@ -1,10 +1,10 @@
 class ReservationsController < ApplicationController
-  allow_unauthenticated_access only: [:index, :show, :new, :create]
+  allow_unauthenticated_access only: [ :index, :show, :new, :create ]
   before_action :set_reservation, only: %i[ show edit update destroy ]
 
   # GET /reservations or /reservations.json
   def index
-    @tab = params[:tab] || (current_user ? 'ativas' : 'sugestoes')
+    @tab = params[:tab] || (current_user ? "ativas" : "sugestoes")
 
     if current_user
       all_reservations = Reservation.where(
@@ -13,31 +13,31 @@ class ReservationsController < ApplicationController
       )
 
       case @tab
-      when 'ativas'
+      when "ativas"
         @reservations = all_reservations.joins(:establishment)
-                                        .where('date >= ? AND status IN (?)',
-                                               Time.current, ['confirmed', 'pending'])
+                                        .where("date >= ? AND status IN (?)",
+                                               Time.current, [ "confirmed", "pending" ])
                                         .includes(:establishment)
                                         .order(date: :asc)
-      when 'historico'
+      when "historico"
         @reservations = all_reservations.joins(:establishment)
-                                        .where('date < ? OR status = ?',
-                                               Time.current, 'completed')
+                                        .where("date < ? OR status = ?",
+                                               Time.current, "completed")
                                         .includes(:establishment)
                                         .order(date: :desc)
-      when 'sugestoes'
+      when "sugestoes"
         # Sugestões baseadas nos estabelecimentos que o usuário já reservou
         visited_establishment_ids = all_reservations.pluck(:establishment_id).uniq
 
         @suggestions = if visited_establishment_ids.any?
           # Sugere estabelecimentos similares (mesma categoria ou próximos)
           Establishment.where.not(id: visited_establishment_ids)
-                      .where('rating >= ?', 4.0)
+                      .where("rating >= ?", 4.0)
                       .order(rating: :desc)
                       .limit(10)
         else
           # Para usuários novos, sugere os mais bem avaliados
-          Establishment.where('rating >= ?', 4.5).order(rating: :desc).limit(10)
+          Establishment.where("rating >= ?", 4.5).order(rating: :desc).limit(10)
         end
         @reservations = []
       else
@@ -46,7 +46,7 @@ class ReservationsController < ApplicationController
     else
       # Para usuários não logados, sempre mostrar sugestões dos melhores restaurantes
       @reservations = []
-      @suggestions = Establishment.where('rating >= ?', 4.0).order(rating: :desc).limit(10)
+      @suggestions = Establishment.where("rating >= ?", 4.0).order(rating: :desc).limit(10)
     end
   end
 

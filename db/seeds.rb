@@ -52,7 +52,7 @@ end
 puts "Criando estabelecimentos com dados realistas..."
 
 # Tipos de estabelecimentos
-establishment_types = ['restaurant', 'fast_food', 'cafe', 'bar', 'food_truck']
+establishment_types = [ 'restaurant', 'fast_food', 'cafe', 'bar', 'food_truck' ]
 
 # Coordenadas de São Paulo (região central)
 sp_lat_base = -23.5505
@@ -63,17 +63,17 @@ sp_lng_base = -46.6333
 
   # Gerar nomes realistas baseados na categoria
   name = case category.name
-          when "Pizza"
-            ["Pizzaria #{Faker::Name.last_name}", "#{Faker::Name.first_name} Pizza", "Pizza #{Faker::Address.community}"].sample
-          when "Hambúrguer"
-            ["Burger #{Faker::Name.last_name}", "#{Faker::Name.first_name} Burgers", "Hamburgueria #{Faker::Address.community}"].sample
-          when "Sushi"
-            ["Sushi #{Faker::Name.first_name}", "Restaurante Japonês #{Faker::Name.first_name}", "#{Faker::Name.last_name} Sushi"].sample
-          when "Café"
-            ["Café #{Faker::Name.first_name}", "Cafeteria #{Faker::Address.community}", "#{Faker::Name.last_name} Coffee"].sample
-          else
+  when "Pizza"
+            [ "Pizzaria #{Faker::Name.last_name}", "#{Faker::Name.first_name} Pizza", "Pizza #{Faker::Address.community}" ].sample
+  when "Hambúrguer"
+            [ "Burger #{Faker::Name.last_name}", "#{Faker::Name.first_name} Burgers", "Hamburgueria #{Faker::Address.community}" ].sample
+  when "Sushi"
+            [ "Sushi #{Faker::Name.first_name}", "Restaurante Japonês #{Faker::Name.first_name}", "#{Faker::Name.last_name} Sushi" ].sample
+  when "Café"
+            [ "Café #{Faker::Name.first_name}", "Cafeteria #{Faker::Address.community}", "#{Faker::Name.last_name} Coffee" ].sample
+  else
             "#{category.name} #{Faker::Name.last_name}"
-          end
+  end
 
   # Coordenadas variadas em SP
   lat_variation = rand(-0.05..0.05)
@@ -158,7 +158,7 @@ users = User.all
     date: future_date,
     people_count: rand(1..8),
     email: user_for_reservation.email_address,
-    status: ['pending', 'confirmed'].sample
+    status: [ 'pending', 'confirmed' ].sample
   )
 end
 
@@ -175,7 +175,7 @@ end
     date: past_date,
     people_count: rand(1..8),
     email: user_for_reservation.email_address,
-    status: ['completed', 'cancelled'].sample
+    status: [ 'completed', 'cancelled' ].sample
   )
 end
 
@@ -190,7 +190,7 @@ end
     date: future_date,
     people_count: rand(1..6),
     email: Faker::Internet.email,
-    status: ['pending', 'confirmed'].sample
+    status: [ 'pending', 'confirmed' ].sample
   )
 end
 

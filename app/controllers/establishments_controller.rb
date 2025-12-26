@@ -1,5 +1,5 @@
 class EstablishmentsController < ApplicationController
-  allow_unauthenticated_access only: [:index, :show]
+  allow_unauthenticated_access only: [ :index, :show ]
   before_action :set_establishment, only: %i[ show edit update destroy ]
 
   # GET /establishments or /establishments.json

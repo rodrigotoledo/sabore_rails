@@ -14,6 +14,6 @@ class Reservation < ApplicationRecord
   end
 
   def confirmed?
-    status == 'confirmed'
+    status == "confirmed"
   end
 end

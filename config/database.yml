@@ -6,28 +6,37 @@ default: &default
 development:
   primary:
     <<: *default
-    database: <%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_development" %>
+    database: storage/<%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_development" %>.sqlite3
   cache:
     <<: *default
-    database: storage/<%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_cache_development" %>
-    migrations_path: db/cache_migrate
+    database: storage/development_cache.sqlite3
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: storage/development_queue.sqlite3
+    migrations_paths: db/queue_migrate
   cable:
     <<: *default
-    database: storage/<%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_cable_development" %>
-    migrations_path: db/cable_migrate
+    database: storage/development_cable.sqlite3
+    migrations_paths: db/cable_migrate
+
 test:
   <<: *default
-  database: <%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_test" %>
+  database: storage/<%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_test" %>.sqlite3
 
 production:
   primary:
     <<: *default
-    url: <%= ENV.fetch("DATABASE_URL", 'url_production_database') %>
+    url: <%= ENV.fetch("DATABASE_URL", 'url_production_database') %>.sqlite3
   cache:
     <<: *default
-    database: storage/<%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_cache_production" %>
-    migrations_path: db/cache_migrate
+    database: storage/production_cache.sqlite3
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: storage/production_queue.sqlite3
+    migrations_paths: db/queue_migrate
   cable:
     <<: *default
-    database: storage/<%= "#{ENV.fetch('APPLICATION_NAME', 'app')}_cable_production" %>
-    migrations_path: db/cable_migrate
+    database: storage/production_cable.sqlite3
+    migrations_paths: db/cable_migrate
