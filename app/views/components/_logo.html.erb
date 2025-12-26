@@ -1,0 +1,6 @@
+<%= link_to root_path, class: "flex items-center gap-2 text-white font-bold text-xl" do %>
+  <div class="<%= local_assigns.fetch(:width, 'w-8') %> <%= local_assigns.fetch(:height, 'h-8') %> bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+    <span class="text-yellow-500 text-2lg font-bold">🍽️</span>
+  </div>
+  <span class="hidden sm:block">Sabore</span>
+<% end %>

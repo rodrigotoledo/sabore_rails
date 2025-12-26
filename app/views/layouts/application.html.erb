@@ -40,12 +40,7 @@
       <div class="px-4 py-3">
         <div class="flex gap-3 items-center">
           <!-- Logo da aplicação -->
-          <%= link_to root_path, class: "flex items-center gap-2 text-white font-bold text-xl" do %>
-            <div class="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-              <span class="text-yellow-500 text-2lg font-bold">🍽️</span>
-            </div>
-            <span class="hidden sm:block">Sabore</span>
-          <% end %>
+          <%= render "components/logo" %>
 
           <div class="flex-1 relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
