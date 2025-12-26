@@ -24,5 +24,6 @@ module Sabore
     config.time_zone = "America/Sao_Paulo"
     config.i18n.default_locale = :"pt-BR"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.autoload_paths << Rails.root.join("app/resources")
   end
 end

@@ -1,0 +1,20 @@
+{
+  "name": "sabore-whatsapp-mcp-bot",
+  "version": "1.0.0",
+  "description": "Bot WhatsApp que integra com MCP do Rails",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.24.0",
+    "qrcode-terminal": "^0.12.0",
+    "node-fetch": "^3.3.2",
+    "openai": "^4.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}

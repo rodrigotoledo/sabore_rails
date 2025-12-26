@@ -1,24 +1,47 @@
-# README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Sabore Rails
 
-Things you may want to cover:
+Aplicação Rails 8 com integração ao Model Context Protocol (MCP) via [fast-mcp](https://github.com/yjacquin/fast-mcp).
 
-* Ruby version
+## Principais tecnologias
+- Ruby on Rails 8
+- Turbo, Stimulus, TailwindCSS
+- fast-mcp (MCP para LLM/AI)
 
-* System dependencies
+## Como rodar o projeto
 
-* Configuration
+```bash
+bundle install
+rails db:setup
+rails server
+```
 
-* Database creation
+## Integração MCP (Model Context Protocol)
 
-* Database initialization
+O projeto expõe recursos dos principais modelos via MCP, permitindo integração com LLMs e agentes externos.
 
-* How to run the test suite
+### Endpoints MCP disponíveis
 
-* Services (job queues, cache servers, search engines, etc.)
+- `/mcp/resources/menu_items`
+- `/mcp/resources/establishments`
+- `/mcp/resources/users`
+- `/mcp/resources/reservations`
+- `/mcp/resources/categories`
 
-* Deployment instructions
+Esses endpoints retornam os dados dos modelos em JSON, prontos para consumo por LLMs ou ferramentas MCP.
 
-* ...
+### Inspecionando o contexto MCP
+
+Você pode usar o inspector oficial do MCP para explorar os recursos:
+
+```bash
+npx @modelcontextprotocol/inspector
+```
+
+## Adicionando novos recursos MCP
+
+Basta criar um novo arquivo em `app/resources/` herdando de `ApplicationResource` e definir o método `content`.
+
+## Referências
+- [fast-mcp no GitHub](https://github.com/yjacquin/fast-mcp)
+- [Model Context Protocol](https://modelcontext.org/)
